@@ -3,56 +3,54 @@ import PropTypes from 'prop-types';
 
 class Summary extends Component {
   constructor(props) {
-    super(props);
-
+    super(props);    
     this.state = {
-        size: '',
-        crust: '',
-        cheese: '',
-        sauce: '',
-        meatsinput: '',
-        nonmeatsinput: '',
+      pizza: null,
+      cnt:0,
+      msg:'',
     };
   }
+  componentDidMount(){
+    const order = this.props.order;
+    const isSpc = this.props.steps.spcQues.value;
 
-  componentWillMount() {
-    const { steps } = this.props;
-    const { size, crust, cheese, sauce, meatsinput, nonmeatsinput } = steps;
-
-    this.setState({ size, crust, cheese, sauce, meatsinput, nonmeatsinput });
+    const spec = (isSpc==='yesSpc'?this.props.steps.userInst.value:'');
+    const p = order.CurrentPizza;
+    p.SpecialInstructions = spec;
+    const c = order.PizzaCnt;
+    const pizzaID = p.PizzaID;
+    const msg = order.getPizza(pizzaID);
+    this.setState({
+      pizza: p,
+      cnt:c,
+      msg:msg,
+    })
   }
 
-  render() {
-    const { size, crust, cheese, sauce, meatsinput, nonmeatsinput } = this.state;
+  render() {   
+    const msg = this.state.msg;   
     return (
-      <div style={{ width: '100%' }}>
-        <h3>Summary</h3>
-        <table>
+      <div className="summary" style={{ width: '100%' }}>
+        <h3>{msg.title}</h3>
+        <h6>{msg.type}</h6>
+        <h6>With:</h6>        
+        <table className="summaryTable">
           <tbody>
-            <tr>
-              <td>Size</td>
-              <td>{size.message}</td>
+            <tr className="summarySauce">
+               <td>{msg.sauce}</td>
             </tr>
-            <tr>
-              <td>Crust</td>
-              <td>{crust.message}</td>
+            <tr className="summaryCheese">
+              <td>{msg.cheeses}</td>
             </tr>
-            <tr>
-              <td>Cheese</td>
-              <td>{cheese.message}</td>
+            <tr className="summaryMeats">
+              <td>{msg.meats}</td>
             </tr>
-            <tr>
-              <td>Sauce</td>
-              <td>{sauce.message}</td>
+            <tr className="summaryNonMeats"> 
+              <td>{msg.nonMeats}</td>
             </tr>
-            <tr>
-              <td>Meats</td>
-              <td>{meatsinput.value}</td>
-            </tr>
-            <tr>
-              <td>Toppings</td>
-              <td>{nonmeatsinput.value}</td>
-            </tr>
+            <tr className="summaryInst"> 
+              <td>{msg.noninst}</td>
+            </tr>            
           </tbody>
         </table>
       </div>
