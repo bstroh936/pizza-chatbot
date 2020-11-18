@@ -1,9 +1,8 @@
 import Menu from './pizzaMenu.json';
-
 class itemMenu{
   constructor(){
     this.menu = Menu;
-    const obj = this.menu.menuSteps;
+    
     const arr = function(obj) {      
       let x;
       let ret = [];
@@ -12,14 +11,15 @@ class itemMenu{
       }
       return ret;
     };    
-    this.menuSteps = arr(obj);         
+    this.menuSteps = arr(this.menu.menuSteps);         
   }
+
   get MenuSteps(){
     return this.menuSteps;
   }
   GetItemName(type,id){
     const items = this.menu.menuSteps[type];
-    const val = items.values.find((i)=>i.id===id)
+    const val = items.values.find((i)=>i.id===id);
     return val.name;
   }
   GetItemID(type,name){
@@ -28,39 +28,33 @@ class itemMenu{
     return val.id;
   }
   GetOptMsg(type, id){
+    //if(id==='0') return '';
     const items = this.menu.options[type];
     const val = items.find((i)=>i.id===id)
     return val.name;
   }
-  getMenuStep(step){    
-    const hasQty = this.getHasQty(step);
-    const hasHalf = this.getHasHalf(step);
-    const hasMulti = this.getHasMultiple(step);
-    const hasSizes = this.getHasSizes(step);
-    let oEle = [];
-    if(hasQty||hasHalf){
-      oEle = this.buildMultRowStep(step,hasHalf,hasQty);
-    } else {
-      oEle = this.buildSimpleStep(step);
+  getStepMessage(step){
+    const proper = this.menu.menuSteps[step].properL;
+    if(this.getHasMultipleSelect(step)){
+     return `Please select the combination of ${proper} you would like on the pizza`;
+    } else {      
+      return `Please select a ${proper} for the pizza`;
     }
-    let msg = '';
-    if(hasMulti){
-     msg = `Please select the combination of ${step} you would like on the pizza`;
+  }
+  getContentType(step){
+    if( this.getHasQty(step)|| this.getHasHalf(step)){
+      return 'multi';
     } else {
-      let single = step.substring(0,step.length-1);
-      msg = `Please select a ${single} for the pizza`;
+      return 'simple';
     }
-    const n = this.getNext(step);
-    const orderStep = {      
-      msg: msg,
-      next: n==='EOM'?'specialinstmsg':n,
-      prev: this.getPrev(step),
-      elements: oEle,
-      hasRows: (hasHalf||hasQty),
-      hasMulti: hasMulti,
-      hasSizes: hasSizes,
-    };
-    return orderStep;
+  }
+  getStepElements(step){    
+    if(this.menuSteps.findIndex(s => s === step)===-1) return null;    
+    if( this.getHasQty(step)|| this.getHasHalf(step)){
+     return this.buildMultRowStep(step,this.getHasHalf(step),this.getHasQty(step));
+    } else {
+      return this.buildSimpleStep(step);
+    }
   }
   getNext(step){
     const i = this.menuSteps.findIndex(s => s === step)
@@ -69,6 +63,10 @@ class itemMenu{
   getPrev(step){
     const i = this.menuSteps.findIndex(s => s === step)
     return this.getStep(i-1);
+  }
+  checkStep(step){
+    const i = this.menuSteps.findIndex(s => s === step)
+    return i!==-1
   }
   getStep(i){
     if(i>=this.menuSteps.length){      
@@ -83,7 +81,7 @@ class itemMenu{
     const items = this.getItemsList(step);
     const itemArry = items.map((i)=> {
       const id = i.id;
-      const name = i.name;
+      const name = i.short;
       let btns = [];
       if(hasHalf){
         const b = this.buildOptBtns(step, 'half', id);
@@ -107,12 +105,12 @@ class itemMenu{
     const itemArry = items.map((i)=> {   
       const btn = {
         btnClass:'btn-item',
-        btnCapt:i.name,
+        btnCapt:i.short,
         listKey:`${step}-${i.id}`,
         btnMsg:i.name,
         itemInfo: {
           item:step,
-          itemID:i.id,          
+          id:i.id,          
         },        
       };
       return btn;
@@ -124,7 +122,7 @@ class itemMenu{
     const btnArry = optList.map((o)=> {
       const itemInfo= {
         item:step,
-        itemID:itemID,
+        id:itemID,
         [opt]:o.id,
       };
       const btn = {
@@ -132,6 +130,7 @@ class itemMenu{
         btnCapt: o.short,
         listKey:`${step}-${itemID}-${opt}-${o.id}`,
         btnMsg:o.name,
+        btnType: opt,
         itemInfo: itemInfo,
       };
       return btn;
@@ -158,7 +157,7 @@ class itemMenu{
     const ret = obj.half;
     return ret;
   }
-  getHasMultiple(step){
+  getHasMultipleSelect(step){
     const obj = this.menu.menuSteps[step];
     const ret = obj.multiple;
     return ret;

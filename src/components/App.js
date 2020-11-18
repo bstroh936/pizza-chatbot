@@ -2,29 +2,28 @@ import React from 'react';
 import '../css/App.css';
 import DisplayMainArea from './DisplayMainArea';
 import logo from '../resources/SliceLogo.png';
-import Order from './OrderControl';
+import Order from './PizzaOrder';
 
 import StoreLoc from './StoreLoc';
 
 class App extends React.Component {
   constructor(props) {
     super(props);    
+    this.updateLoc = this.updateLoc.bind(this);
+    this.setStore = this.setStore.bind(this);
+    this.mainPage = this.mainPage.bind(this);    
     this.state = {
       showPage: 'Location',       
       locObj: this.props.locObj,      
-      order: new Order(),
+      order: new Order('new'),
     };
-    this.updateLoc = this.updateLoc.bind(this);
-    this.setStore = this.setStore.bind(this);
     this.input = React.createRef();        
   }
   setStore(locObj){
     const page = 'Main';    
-    const order = this.state.order.RestartOrder();
     this.setState({
       showPage: page,
-      locObj: locObj,
-      order: order,     
+      locObj: locObj,           
     });    
   }
   updateLoc(props){
@@ -35,21 +34,14 @@ class App extends React.Component {
       showPage: page,             
     });
   }
-  resetOrder(){
-    const locObj = this.state.locObj;
-    const page = 'Location';
-    const order = this.state.order.RestartOrder();
-    this.setState({
-      locObj:locObj,
-      showPage: page,
-      order: order,      
-    })
+  mainPage(){
+
   }
   cancelOrder(){
-    const order = this.state.order.RestartOrder();
-    this.setState({
-      order: order,      
-    });
+
+  }
+  completeOrder(){
+
   }
   get StoreBanner(){
     const {locObj} = this.state;
@@ -65,9 +57,6 @@ class App extends React.Component {
     );
     return banner;
   }
-  completeOrder(){
-
-  }
   render(){                 
     const banner = this.StoreBanner;
     return (
@@ -79,7 +68,7 @@ class App extends React.Component {
         {banner}
       </header>      
       <StoreLoc appState={this.state} 
-        set={this.setStore} update={this.updateLoc}/>      
+        set={this.setStore} update={this.updateLoc} forwardedRef={this.input}/>      
       <DisplayMainArea appState={this.state} 
         reset={this.resetOrder} cancel={this.cancelOrder} complete={this.completeOrder}/>
       </div>
