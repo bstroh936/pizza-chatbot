@@ -1,79 +1,68 @@
 import React from 'react';
-import '../css/App.css';
-import DisplayMainArea from './DisplayMainArea';
-import logo from '../resources/SliceLogo.png';
 import Order from './PizzaOrder';
-
-import StoreLoc from './StoreLoc';
-
+import {Header, MainArea, SliceBot} from './PageDisplay'
+import '../css/App.css';
+import '../css/DisplayMainArea.css';
+import BotAlertMsg from './AppElements/Util/BotAlertMsg';
+import {reducer} from './AppReducer';
+import Pizza from './Pizza';
+import ItemMenu from './itemMenu';
 class App extends React.Component {
   constructor(props) {
-    super(props);    
-    this.updateLoc = this.updateLoc.bind(this);
-    this.setStore = this.setStore.bind(this);
-    this.mainPage = this.mainPage.bind(this);    
-    this.state = {
-      showPage: 'Location',       
-      locObj: this.props.locObj,      
-      order: new Order('new'),
+    super(props);       
+    this.updateAppState =this.updateAppState.bind(this);
+    this.getBotState = this.getBotState.bind(this);          
+    this.state = {      
+      alert:false,      
+      display:{
+        page:'Location',
+        bot:false,
+        botDisplay:false,        
+      },             
+      locObj: this.props.locObj,           
+      order: new Order(),
+      menu: new ItemMenu(),
+      currentPizza: new Pizza(0),                       
     };
-    this.input = React.createRef();        
+    this.input = React.createRef();            
   }
-  setStore(locObj){
-    const page = 'Main';    
-    this.setState({
-      showPage: page,
-      locObj: locObj,           
-    });    
+  updateAppState = (props) => {    
+    this.setState(
+      reducer({
+        type:props.type,
+        values:props.values,
+      })
+    )
   }
-  updateLoc(props){
-    const locObj = props.locObj;
-    const page = props.page;    
-    this.setState({
-      locObj:locObj,
-      showPage: page,             
-    });
+  getBotState(){
+    const botState = {
+      showBot:this.state.display.bot,
+      botDisplay:this.state.display.botDisplay,
+      order:this.state.order,
+      menu: this.state.menu,
+      pizza:this.state.currentPizza,
+    }
+    return botState
   }
-  mainPage(){
-
-  }
-  cancelOrder(){
-
-  }
-  completeOrder(){
-
-  }
-  get StoreBanner(){
-    const {locObj} = this.state;
-    const selectedStore = locObj.curStoreID;
-    if(selectedStore==='0'){ return null;}          
-    const storeInfo = locObj.curStoreInfo;
-    const banner = (
-      <div className="bannerHead">
-        <div className="bannerName">{storeInfo.name}</div>
-        <div className="bannerHours">{storeInfo.hours}</div>
-        <div className="bannerChange" onClick={() => this.updateLoc('Search')}>Change Location</div>
-      </div>
-    );
-    return banner;
-  }
-  render(){                 
-    const banner = this.StoreBanner;
+  reset(){
+    const values= {                 
+      order: new Order()}
+    this.updateAppState({type:'reset', values:values})
+  }  
+  render(){
+    const alert = this.state.alert?<BotAlertMsg values={this.state.alert} onClose={(p)=>{return this.updateAppState(p)}}/>:null;
+    const {display, locObj}=this.state;
+    const showPage = display.page;
+    const showBot = display.bot;
+    
     return (
-      <>
-      <div className="mainPageArea">
-      <header>
-        <img src={logo} alt="Logo" onClick={() => this.resetOrder()}></img>
-        <h1>Slice</h1>
-        {banner}
-      </header>      
-      <StoreLoc appState={this.state} 
-        set={this.setStore} update={this.updateLoc} forwardedRef={this.input}/>      
-      <DisplayMainArea appState={this.state} 
-        reset={this.resetOrder} cancel={this.cancelOrder} complete={this.completeOrder}/>
+      <div className="sliceBot">
+        <Header cnt={this.state.order.PizzaCount} locObj={locObj} updateAppState={(p)=>{return this.updateAppState(p)}}/>
+        <MainArea showPage={showPage} locObj={locObj} updateAppState={(p)=>{return this.updateAppState(p)}} forwardedRef={this.input}/>
+        <SliceBot showBot={showBot} getBotState={this.getBotState} updateAppState={(p)=>{return this.updateAppState(p)}}/>
+        {alert}
       </div>
-      </>     
-    );
+    )      
   }
 }
 
