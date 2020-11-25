@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/pizza-chatbot/static/css/main.8928d02a.chunk.css",
+    "main.js": "/pizza-chatbot/static/js/main.997f2928.chunk.js",
+    "main.js.map": "/pizza-chatbot/static/js/main.997f2928.chunk.js.map",
+    "runtime-main.js": "/pizza-chatbot/static/js/runtime-main.3490ce2c.js",
+    "runtime-main.js.map": "/pizza-chatbot/static/js/runtime-main.3490ce2c.js.map",
+    "static/css/2.43b2b750.chunk.css": "/pizza-chatbot/static/css/2.43b2b750.chunk.css",
+    "static/js/2.7b02503e.chunk.js": "/pizza-chatbot/static/js/2.7b02503e.chunk.js",
+    "static/js/2.7b02503e.chunk.js.map": "/pizza-chatbot/static/js/2.7b02503e.chunk.js.map",
+    "index.html": "/pizza-chatbot/index.html",
+    "static/css/2.43b2b750.chunk.css.map": "/pizza-chatbot/static/css/2.43b2b750.chunk.css.map",
+    "static/css/main.8928d02a.chunk.css.map": "/pizza-chatbot/static/css/main.8928d02a.chunk.css.map",
+    "static/js/2.7b02503e.chunk.js.LICENSE.txt": "/pizza-chatbot/static/js/2.7b02503e.chunk.js.LICENSE.txt",
+    "static/media/pizza-main-area.90296f53.jpg": "/pizza-chatbot/static/media/pizza-main-area.90296f53.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.3490ce2c.js",
+    "static/css/2.43b2b750.chunk.css",
+    "static/js/2.7b02503e.chunk.js",
+    "static/css/main.8928d02a.chunk.css",
+    "static/js/main.997f2928.chunk.js"
+  ]
+}
